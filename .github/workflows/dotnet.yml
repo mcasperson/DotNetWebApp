@@ -29,7 +29,8 @@ jobs:
 
     - name: Create ZIP file
       run: |
-        zip dotnetwebapp.zip ./bin/Release/netcoreapp3.1/publish/*
+        cd ./bin/Release/netcoreapp3.1/publish
+        zip dotnetwebapp.zip ./*
         
     - name: Create Release
       id: create_release
@@ -49,6 +50,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: dotnetwebapp.zip
+        asset_path: ./bin/Release/netcoreapp3.1/publish/dotnetwebapp.zip
         asset_name: dotnetwebapp.zip
         asset_content_type: application/zip
