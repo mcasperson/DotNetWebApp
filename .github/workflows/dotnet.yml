@@ -22,4 +22,33 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity normal   
+
+    - name: Publish
+      run: dotnet publish -c Release
+
+    - name: Create ZIP file
+      run: |
+        zip dotnetwebapp.zip ./bin/Release/netcoreapp3.1/publish/*
+        
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: 0.0.${{ github.run_number }}
+        release_name: Release 0.0.${{ github.run_number }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dotnetwebapp.zip
+        asset_name: dotnetwebapp.zip
+        asset_content_type: application/zip
